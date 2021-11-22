@@ -1,11 +1,14 @@
 <?php
 namespace Deployer;
 
-require 'recipe/symfony.php';
+require 'recipe/symfony4.php';
 
 // Project name
 set('application', 'deployed-test');
 
+// don't want to install composer on my local machine (just testing deployer locally now) @todo change this when on remote server
+
+set('composer_options',"{{ composer_action }} --verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader --no-suggest");
 // Project repository
 set('repository', 'https://github.com/EliaCools/deployer-test.git');
 
@@ -13,12 +16,15 @@ set('repository', 'https://github.com/EliaCools/deployer-test.git');
 set('git_tty', true); 
 
 // Shared files/dirs between deploys 
-add('shared_files', []);
+add('shared_files', ['.env.local']);
 add('shared_dirs', []);
 
 // Writable dirs by web server 
 add('writable_dirs', []);
 
+set('env', [
+    'APP_ENV' => 'prod',
+]);
 
 // Hosts
 

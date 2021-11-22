@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1> {{ user.userIdentifier() }}</h1>
+
+    <h2> Add friend names to friend list</h2>
+    {# store the prototype on the data-prototype attribute #}
+    {{ form_start(form) }}
+    <ul id="friend-fields-list"
+        data-prototype="{{ form_widget(form.friends.vars.prototype)|e }}"
+        data-widget-tags="{{ '<li></li>'|e }}"
+        data-widget-counter="{{ form.friends|length }}">
+        {% for friendField in form.friends %}
+            <li>
+                {{ form_errors(friendField) }}
+                {{ form_widget(friendField) }}
+
+            </li>
+        {% endfor %}
+    </ul>
+
+    <button type="button"
+            id="add-another-collection-widget"
+            data-list-selector="#friend-fields-list">Add another email</button>
+
+    <input type="submit" value="submit">
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
