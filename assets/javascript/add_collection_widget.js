@@ -17,9 +17,9 @@ window.addEventListener('load', function () {
 
         })
 
-    Array.from(document.querySelector('#friend-fields-list').children).forEach(listItem => {
-        listItem.appendChild(addDeleteButtons());
-    })
+ //  Array.from(document.querySelector('#friend-fields-list').children).forEach(listItem => {
+ //      listItem.appendChild(addDeleteButtons());
+ //  })
 
 })
 

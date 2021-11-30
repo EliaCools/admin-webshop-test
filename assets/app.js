@@ -11,4 +11,5 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
-import './javascript/add_collection_widget'
+import './javascript/add_collection_widget';
+import './javascript/add_collection_widget_2';

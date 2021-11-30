@@ -4,7 +4,7 @@ namespace Deployer;
 require 'recipe/symfony4.php';
 
 // Project name
-set('application', 'deployed-test');
+set('application', 'deployer-deployed');
 
 // don't want to install composer on my local machine (just testing deployer locally now) @todo change this when on remote server
 
@@ -28,8 +28,8 @@ set('env', [
 
 // Hosts
 
-localhost('deployertest.local')
-    ->set('deploy_path', '~/{{application}}');
+host('deployertestdeployed.local')
+    ->set('deploy_path', '/var/www/{{application}}');
     
 // Tasks
 task('test', function() {

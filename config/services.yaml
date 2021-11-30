@@ -23,14 +23,31 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    sonata.block.service.login:
+        class: App\Admin\blockService\LoginBlockService
+        arguments:
+            - '@twig'
+        tags:
+            - { name: sonata.block}
+
 
     admin.category:
         class: App\Admin\CategoryAdmin
-        arguments: [ ~, App\Entity\Category, ~ ]
+        arguments: [ ~, App\Entity\Category, App\Controller\CategoryAdminController]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Category }
+            - { name: sonata.admin, manager_type: orm, group: main, label: Category }
     admin.product:
         class: App\Admin\ProductAdmin
         arguments: [ ~, App\Entity\Product, ~ ]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Product }
+            - { name: sonata.admin, manager_type: orm, group: main, label: Product }
+    admin.productimage:
+        class: App\Admin\ProductImageAdmin
+        arguments: [~, App\Entity\ProductImage, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: hide,  label: ProductImage, show_in_dashboard: false }
+    admin.user:
+        class: App\Admin\UserAdmin
+        arguments: [~, App\Entity\User, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: hide,  label: user }

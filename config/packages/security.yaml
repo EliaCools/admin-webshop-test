@@ -37,3 +37,22 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_SONATA_WEBSHOP_EDITOR:
+            - ROLE_ADMIN_PRODUCT_EDIT
+            - ROLE_ADMIN_USER_EDIT
+            - ROLE_ADMIN_USER_CREATE
+            - ROLE_ADMIN_PRODUCT_DELETE
+            - ROLE_ADMIN_CATEGORY_DELETE
+        ROLE_SONATA_WEBSHOP_VIEWER:
+            - ROLE_ADMIN_PRODUCT_LIST
+            - ROLE_ADMIN_CATEGORY_LIST
+            - ROLE_ADMIN_USER_VIEW
+            - ROLE_ADMIN_PRODUCT_VIEW
+            - ROLE_ADMIN_USER_LIST
+
+        ROLE_STAFF: [ROLE_SONATA_WEBSHOP_VIEWER]
+        ROLE_ADMIN: [ROLE_STAFF, ROLE_SONATA_WEBSHOP_EDITOR]
+
+    access_decision_manager:
+        strategy: unanimous

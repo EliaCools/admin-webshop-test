@@ -1,13 +1,21 @@
 sonata_admin:
-    title: 'Sonata Admin'
+    title: 'qdf'
+    title_logo: 'images/logo_title.png'
     dashboard:
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }
+            - { type: sonata.block.service.login, position: left}
     assets:
         extra_javascripts: ['app.js']
     options:
         use_stickyforms: false
+    security:
+        handler: sonata.admin.security.handler.role
+    templates:
+        layout: '/admin/standard_layout_extended.html.twig'
 sonata_block:
     blocks:
         sonata.admin.block.admin_list:
+            contexts: [admin]
+        sonata.block.service.login:
             contexts: [admin]
