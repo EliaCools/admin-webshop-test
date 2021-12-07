@@ -13,7 +13,11 @@ class ProductImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('file', FileType::class)
+            ->add('file', FileType::class, [
+                'label_attr' => ['class' => 'btn btn-outline-info'],
+                'required' => false,
+                'label' => 'upload image',
+            ])
 
 
         ;

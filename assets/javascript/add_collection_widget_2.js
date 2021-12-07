@@ -1,34 +1,71 @@
-window.addEventListener('load', () => {
-    document.querySelector("#add_item_link").addEventListener('click', addFormToCollection);
+// window.addEventListener('load', () => {
+//     document.querySelector("#add_item_link").addEventListener('click', addFormToCollection);
+//
+//     const items = Array.from(document.querySelector('ul.tags').children);
+//     items.forEach(item => {
+//         addTagFormDeleteLink(item, "test");
+//     })
+//
+// })
 
-    const tags = Array.from(document.querySelector('ul.tags').children);
-    tags.forEach(tag => {
-        addTagFormDeleteLink(tag);
+function showExistingFileNames() {
+
+    let classId = document.querySelector("#add_item_link").dataset.collectionHolderClass
+
+    Array.from(document.querySelector(classId).children).forEach((element, index) => {
+        document.querySelector(classId + '_' + index + '_file').parentNode.appendChild(document.querySelector('#existing_file_' + index))
+        document.querySelector(classId + '_' + index + '_file').classList.add("transparent")
+
     })
 
-})
+    fileNameToggle(classId)
+}
 
-function addFormToCollection (e){
-    const collectionHolder = document.querySelector(this.dataset.collectionHolderClass);
-    const item = document.createElement('li');
+function fileNameToggle(classId) {
+    let oldvalues = {};
+    document.querySelector('form').addEventListener("change", () => {
 
-    let counter = collectionHolder.dataset.index;
+        Array.from(document.querySelector(classId).children).forEach((element, index) => {
+
+            if (document.querySelector('#existing_file_' + index)) {
+                if (document.querySelector(classId + '_' + index + '_file').value) {
+                    oldvalues[index] = document.querySelector('#existing_file_' + index).innerText
+                    document.querySelector('#existing_file_' + index).innerHTML = document.querySelector(classId + '_' + index + '_file').value
+
+                } else {
+                    document.querySelector('#existing_file_' + index).innerText = oldvalues[index];
+                }
+            }
+        })
+    })
+}
+
+function addFormToCollection(string, e) {
+    let test = e.target
+    const collectionHolder = document.querySelector(test.dataset.collectionHolderClass);
+    const item = document.createElement('div');
+    item.classList.add("file-drop-area")
+    let counter = collectionHolder.dataset.widgetCounter;
     item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, counter);
 
-    addTagFormDeleteLink(item);
-    collectionHolder.appendChild(item);
-    collectionHolder.dataset.index++;
+    addTagFormDeleteLink(item, string);
+    collectionHolder.insertAdjacentElement('beforeend', item);
+    collectionHolder.dataset.widgetCounter++;
 
 }
 
-function addTagFormDeleteLink(tagFormList){
-    const button = document.createElement("button");
-    button.innerText = "delete this tag";
+function addTagFormDeleteLink(collectionHolder, deleteButtonString) {
 
-    button.addEventListener('click', (e) =>{
+    const button = document.createElement("button");
+    button.innerText = deleteButtonString;
+    button.classList.add('btn')
+    button.classList.add('btn-outline-secondary')
+    button.addEventListener('click', (e) => {
         e.preventDefault();
-        tagFormList.remove();
+        collectionHolder.remove();
     })
 
-    tagFormList.appendChild(button);
+    collectionHolder.appendChild(button);
 }
+
+export {addFormToCollection, addTagFormDeleteLink, showExistingFileNames}

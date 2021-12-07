@@ -31,16 +31,20 @@ services:
             - { name: sonata.block}
 
 
-    admin.category:
-        class: App\Admin\CategoryAdmin
-        arguments: [ ~, App\Entity\Category, App\Controller\CategoryAdminController]
-        tags:
-            - { name: sonata.admin, manager_type: orm, group: main, label: Category }
     admin.product:
         class: App\Admin\ProductAdmin
         arguments: [ ~, App\Entity\Product, ~ ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: Product }
+        calls:
+            - [setTemplate, ['filter', 'admin/ProductAdmin/filter_admin_fields.html.twig']]
+    admin.category:
+        class: App\Admin\CategoryAdmin
+        arguments: [ ~, App\Entity\Category, App\Controller\CategoryAdminController ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Category }
+        calls:
+            - [ addChild, ['@admin.product', 'category' ] ]
     admin.productimage:
         class: App\Admin\ProductImageAdmin
         arguments: [~, App\Entity\ProductImage, ~]

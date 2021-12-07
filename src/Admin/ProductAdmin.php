@@ -14,6 +14,7 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\AdminType;
 use Sonata\AdminBundle\Form\Type\CollectionType;
 use Sonata\AdminBundle\Form\Type\ModelType;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\FieldDescription\FieldDescription;
 use Sonata\DoctrineORMAdminBundle\FieldDescription\FieldDescriptionFactory;
@@ -22,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Security;
+use function Sodium\add;
 
 final class ProductAdmin extends AbstractAdmin
 {
@@ -44,9 +46,10 @@ final class ProductAdmin extends AbstractAdmin
 
             ->add('images', CollectionType::class, [
                         'by_reference' => false,
-                       'allow_add' => true,
+                        'allow_add' => true,
                         'allow_delete' => true,
                         'entry_type' => ProductImageType::class,
+                        'block_prefix' => 'test'
                     ]
             )
 
@@ -56,6 +59,7 @@ final class ProductAdmin extends AbstractAdmin
             ->end()
         ;
     }
+
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
@@ -75,8 +79,15 @@ final class ProductAdmin extends AbstractAdmin
 
             $listMapper->addIdentifier('name')
                 ->addIdentifier('category.name')
-                ->addIdentifier('price');
+                ->addIdentifier('price')
+                ->add(ListMapper::NAME_ACTIONS,null,[
+                    'actions' => [
+                        'edit' => [],
+                        'delete' => []
+                    ]
 
+
+                ]);
 
     }
 
@@ -93,6 +104,14 @@ final class ProductAdmin extends AbstractAdmin
          }
 
         return $actions;
+    }
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+
+
+
+
     }
 
 

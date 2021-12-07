@@ -1,0 +1,24 @@
+{% macro image_field_template(fields) %}
+    {% apply spaceless %}
+        <div class="file_upload_widget">
+            <div class="file-drop-area">
+                <div id="product_images_{{ fields.parent.vars.name }}">
+                    <div>
+                        <label class="btn btn-outline-info" for="{{ fields.vars.id }}">upload image</label>
+                        <input type="file" id="{{ fields.vars.full_name }}" name="{{ fields.vars.full_name }}"/>
+                        <p id="existing_file_{{ fields.parent.vars.name }}" class="existingFileName">
+                            {{ fields.parent.vars.value.directoryPath ?? "No file chosen" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endapply %}
+{% endmacro %}
+
+
+{% block _product_test_entry_widget %}
+    {% for fields in form.children %}
+        {{ _self.image_field_template(fields) }}
+    {% endfor %}
+{% endblock %}

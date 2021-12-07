@@ -41,9 +41,15 @@ class Product
      */
     private $images;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ProductVariation::class, mappedBy="product", orphanRemoval=true)
+     */
+    private $productVariations;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->productVariations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +117,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($image->getProduct() === $this) {
                 $image->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductVariation[]
+     */
+    public function getProductVariations(): Collection
+    {
+        return $this->productVariations;
+    }
+
+    public function addProductVariation(ProductVariation $productVariation): self
+    {
+        if (!$this->productVariations->contains($productVariation)) {
+            $this->productVariations[] = $productVariation;
+            $productVariation->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductVariation(ProductVariation $productVariation): self
+    {
+        if ($this->productVariations->removeElement($productVariation)) {
+            // set the owning side to null (unless already changed)
+            if ($productVariation->getProduct() === $this) {
+                $productVariation->setProduct(null);
             }
         }
 

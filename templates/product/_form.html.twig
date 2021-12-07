@@ -1,0 +1,48 @@
+{% form_theme form with [
+    'product/form_image_field.html.twig'
+] %}
+
+{{ form_start(form) }}
+
+    {{ form_widget(form.name) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.category) }}
+
+<div id="product_images" class="images" data-prototype="{{ form_widget(form.images.vars.prototype) |e }}"
+     data-widget-tags="{{ '<li></li>'|e }}" data-widget-counter="{{ form.images|length }}">
+    {% for imageField in form.images %}
+                {{ form_widget(imageField) }}
+    {% endfor %}
+</div>
+
+{#<div id="product_images" class="images" data-prototype="{{ form_widget(form.images.vars.prototype) |e }}"
+     data-widget-tags="{{ '<li></li>'|e }}" data-widget-counter="{{ form.images|length }}">
+    {% for imageField in form.images %}
+        <div class="file_upload_widget">
+            <div class=" file-drop-area">
+                {{ form_widget(imageField) }}
+                <p id="existing_file_{{ loop.index -1 }}" class="existingFileName">
+                    {{ product.images[loop.index -1].directoryPath }}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>#}
+
+
+<button type="button"
+        id="add_item_link"
+        data-list-selector="#image-fields-list"
+        data-collection-holder-class="#product_images">Add another photo
+</button>
+<br/>
+
+<div class="card" style="max-width: 50%">
+    <div class="card-body">
+        <button class="btn btn-outline-primary">Confirm and Update</button>
+        <a href="{{ path('product_index') }}" class="btn btn-outline-secondary">back to list</a>
+        <a href="{{ path(app.request.attributes.get('_route'), {"id" : product.id} ) }}"
+           class="btn btn-outline-warning"> reset changes</a>
+    </div>
+</div>
+{{ form_end(form) }}
