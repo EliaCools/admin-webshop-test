@@ -17,6 +17,7 @@ class ProductImageType extends AbstractType
                 'label_attr' => ['class' => 'btn btn-outline-info'],
                 'required' => false,
                 'label' => 'upload image',
+
             ])
 
 

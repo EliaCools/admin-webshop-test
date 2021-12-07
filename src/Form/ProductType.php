@@ -24,7 +24,8 @@ class ProductType extends AbstractType
                 'by_reference' => false,
                 'prototype' => true,
                 "required" => false,
-                'block_name' => 'test'
+                'block_name' => 'test',
+
             ])
         ;
     }

@@ -26,7 +26,7 @@ class ProductVariation
     private $product;
 
     /**
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="integer")
      */
     private $quantity;
 
