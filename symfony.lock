@@ -1,4 +1,10 @@
 {
+    "brick/math": {
+        "version": "0.9.3"
+    },
+    "brick/money": {
+        "version": "0.5.3"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.4"
     },
@@ -684,6 +690,9 @@
     },
     "twig/extra-bundle": {
         "version": "v3.3.3"
+    },
+    "twig/intl-extra": {
+        "version": "v3.3.4"
     },
     "twig/string-extra": {
         "version": "v3.3.3"

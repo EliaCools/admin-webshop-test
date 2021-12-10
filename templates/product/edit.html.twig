@@ -24,9 +24,9 @@
 
 
 {% block _product_test_entry_widget %}
-    {% for fields in form.children %}
-        {{ _self.image_field_template(fields) }}
-    {% endfor %}
+        {% for fields in form.children %}
+            {{ _self.image_field_template(fields) }}
+        {% endfor %}
 {% endblock %}
 
 {% block body %}

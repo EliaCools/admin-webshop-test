@@ -93,4 +93,9 @@ class ProductVariation
 
         return $this;
     }
+
+    public function __tostring()
+    {
+        return $this->getAttributes()[0];
+    }
 }

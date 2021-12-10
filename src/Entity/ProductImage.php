@@ -28,6 +28,7 @@ class ProductImage
      */
     private $directoryPath;
 
+
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
@@ -135,5 +136,10 @@ class ProductImage
     public function refreshUpdated()
     {
         $this->setUpdated(new \DateTime());
+    }
+
+    public function __tostring()
+    {
+        return $this->getDirectoryPath();
     }
 }

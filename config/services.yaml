@@ -22,23 +22,31 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-    sonata.block.service.login:
-        class: App\Admin\blockService\LoginBlockService
+
+
+    sonata.block.service.stats:
+        class: App\Admin\blockService\statsBlockService
         arguments:
             - '@twig'
         tags:
-            - { name: sonata.block}
-
+            - {name: sonata.block}
 
     admin.product:
         class: App\Admin\ProductAdmin
-        arguments: [ ~, App\Entity\Product, ~ ]
+        arguments: [ ~, App\Entity\Product, App\Controller\ProductAdminController ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Product }
         calls:
-            - [setTemplate, ['filter', 'admin/ProductAdmin/filter_admin_fields.html.twig']]
+            - [setTemplate, ['edit', 'admin/ProductAdmin/edit.html.twig']]
+            - [setTemplate, ['base_list_field', 'admin/ProductAdmin/list_field.html.twig' ]]
+            - [ addChild, [ '@admin.productvariation', 'product' ] ]
+
+    admin.productvariation:
+        class: App\Admin\ProductVariationAdmin
+        arguments: [ ~, App\Entity\ProductVariation,~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Product Variation, show_in_dashboard: true }
+
     admin.category:
         class: App\Admin\CategoryAdmin
         arguments: [ ~, App\Entity\Category, App\Controller\CategoryAdminController ]
@@ -46,11 +54,25 @@ services:
             - { name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Category }
         calls:
             - [ addChild, ['@admin.product', 'category' ] ]
+
     admin.productimage:
         class: App\Admin\ProductImageAdmin
         arguments: [~, App\Entity\ProductImage, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: hide,  label: ProductImage, show_in_dashboard: false }
+
+    admin.attributegroup:
+        class: App\Admin\AttributeGroupAdmin
+        arguments: [~, App\Entity\AttributeGroup, ~]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Attribute Group}
+
+    admin.attributevalue:
+        class: App\Admin\AttributeValueAdmin
+        arguments: [ ~, App\Entity\AttributeValue, ~ ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Attribute Value }
+
     admin.user:
         class: App\Admin\UserAdmin
         arguments: [~, App\Entity\User, ~]

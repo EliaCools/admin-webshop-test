@@ -6,7 +6,9 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\ProductImage;
 use App\Form\ProductImageType;
+use Knp\Menu\ItemInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -37,91 +39,90 @@ final class ProductAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
-
-
         $formMapper
             ->with('data', ['class' => 'col-md-9'])
-                   ->add('name', TextType::class)
-                   ->add('price', MoneyType::class, ['divisor' => 100])
-
+            ->add('name', TextType::class)
+            ->add('price', MoneyType::class)
             ->add('images', CollectionType::class, [
-                        'by_reference' => false,
-                        'allow_add' => true,
-                        'allow_delete' => true,
-                        'entry_type' => ProductImageType::class,
-                        'block_prefix' => 'test'
-                    ]
-            )
+                    'by_reference' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'entry_type' => ProductImageType::class,
 
+                ]
+            )
             ->end()
             ->with('metadata', ['class' => 'col-md-3'])
             ->add('category', ModelType::class, ['class' => Category::class, 'property' => 'name'])
-            ->end()
-        ;
+            ->end();
     }
 
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper->add('name')
-                        ->add('category'
-                                ,null,
-                                ['field_type' => EntityType::class,
-                                 'field_options' => ['class' => Category::class, 'choice_label' => 'name']
-                                ])
-                        ->add('price')
-
-        ;
+            ->add('category'
+                , null,
+                ['field_type' => EntityType::class,
+                    'field_options' => ['class' => Category::class, 'choice_label' => 'name']
+                ])
+            ->add('price',);
     }
 
     protected function configureListFields(ListMapper $listMapper): void
     {
-
-            $listMapper->addIdentifier('name')
-                ->addIdentifier('category.name')
-                ->addIdentifier('price')
-                ->add(ListMapper::NAME_ACTIONS,null,[
-                    'actions' => [
-                        'edit' => [],
-                        'delete' => []
-                    ]
-
-
-                ]);
+        $listMapper->addIdentifier('name')
+            ->addIdentifier('category.name')
+            ->addIdentifier('price')
+            ->add(ListMapper::NAME_ACTIONS, null, [
+                'actions' => [
+                    'edit' => [],
+                    'delete' => []
+                ]
+            ]);
 
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
-        $show->add('name');
+        $show->add('name')
+             ->add('productVariations')
+            ->add('images');
     }
 
     protected function configureDashboardActions(array $actions): array
     {
         parent::configureDashboardActions($actions);
-        if(!$this->security->isGranted('ROLE_EDITOR')){
-            unset( $actions['create']);
-         }
+        if (!$this->security->isGranted('ROLE_EDITOR')) {
+            unset($actions['create']);
+        }
 
         return $actions;
+    }
+
+    protected function configureTabMenu(ItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
+    {
+        if (!$childAdmin && !in_array($action, ['edit', 'show'])) {
+            return;
+        }
+
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+
+        $menu->addChild('Manage product variations', $admin->generateMenuUrl('admin.productvariation.list', ['id' => $id]));
+
     }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
 
-
-
-
     }
-
 
 
     public function toString(object $object): string
     {
         return $object instanceof Product ? $object->getName() : 'Product';
     }
-
-
 
 
 }

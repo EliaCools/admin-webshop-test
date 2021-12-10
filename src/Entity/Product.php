@@ -26,7 +26,7 @@ class Product
     private $name;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Column(type="decimal", precision=10, scale=3)
      */
     private $price;
 
@@ -151,5 +151,10 @@ class Product
         }
 
         return $this;
+    }
+
+    public function __tostring(): string
+    {
+        return $this->getName();
     }
 }

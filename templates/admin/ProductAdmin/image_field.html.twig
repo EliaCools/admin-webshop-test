@@ -1,0 +1,21 @@
+{% block sonata_type_native_collection_widget_row %}
+    {% apply spaceless %}
+        <div class="sonata-collection-row">
+            {% if allow_delete %}
+            <div class="row">
+                <div class="col-xs-1">
+                    <a href="#" class="btn btn-link sonata-collection-delete">
+                        <i class="fas fa-minus-circle" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="col-xs-11">
+                    {% endif %}
+                    {{ form_row(child, { label: false }) }}
+                    <p> {{ child.vars.value.directorypath ?? "choose a file" }}</p>
+                    {% if allow_delete %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% endapply %}
+{% endblock sonata_type_native_collection_widget_row %}
