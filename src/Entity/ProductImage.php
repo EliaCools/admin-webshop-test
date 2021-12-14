@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ProductImageRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -41,6 +43,16 @@ class ProductImage
      * @ORM\Column(type="datetime", nullable= true)
      */
     private $updated;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=ProductVariation::class, inversedBy="productImages")
+     */
+    private $productVariations;
+
+    public function __construct()
+    {
+        $this->productVariations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -141,5 +153,29 @@ class ProductImage
     public function __tostring()
     {
         return $this->getDirectoryPath();
+    }
+
+    /**
+     * @return Collection|ProductVariation[]
+     */
+    public function getProductVariations(): Collection
+    {
+        return $this->productVariations;
+    }
+
+    public function addProductVariation(ProductVariation $productVariation): self
+    {
+        if (!$this->productVariations->contains($productVariation)) {
+            $this->productVariations[] = $productVariation;
+        }
+
+        return $this;
+    }
+
+    public function removeProductVariation(ProductVariation $productVariation): self
+    {
+        $this->productVariations->removeElement($productVariation);
+
+        return $this;
     }
 }

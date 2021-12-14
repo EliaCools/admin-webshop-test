@@ -35,9 +35,15 @@ class ProductVariation
      */
     private $attributes;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=ProductImage::class, mappedBy="productVariations")
+     */
+    private $productImages;
+
     public function __construct()
     {
         $this->attributes = new ArrayCollection();
+        $this->productImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,8 +100,32 @@ class ProductVariation
         return $this;
     }
 
-    public function __tostring()
+    /**
+     * @return Collection|ProductImage[]
+     */
+    public function getProductImages(): Collection
     {
-        return $this->getAttributes()[0];
+        return $this->productImages;
     }
+
+    public function addProductImage(ProductImage $productImage): self
+    {
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages[] = $productImage;
+            $productImage->addProductVariation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductImage(ProductImage $productImage): self
+    {
+        if ($this->productImages->removeElement($productImage)) {
+            $productImage->removeProductVariation($this);
+        }
+
+        return $this;
+    }
+
+
 }

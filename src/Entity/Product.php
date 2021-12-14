@@ -42,7 +42,7 @@ class Product
     private $images;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductVariation::class, mappedBy="product", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=ProductVariation::class, mappedBy="product", orphanRemoval=true, cascade={"persist"})
      */
     private $productVariations;
 

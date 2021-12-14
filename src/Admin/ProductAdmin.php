@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\ProductImage;
 use App\Form\ProductImageType;
+use App\Form\ProductVariationType;
 use Knp\Menu\ItemInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -14,12 +15,15 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\AdminType;
+
 use Sonata\AdminBundle\Form\Type\CollectionType;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
+
 use Sonata\DoctrineORMAdminBundle\FieldDescription\FieldDescription;
 use Sonata\DoctrineORMAdminBundle\FieldDescription\FieldDescriptionFactory;
+
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -44,16 +48,28 @@ final class ProductAdmin extends AbstractAdmin
             ->add('name', TextType::class)
             ->add('price', MoneyType::class)
             ->add('images', CollectionType::class, [
-                    'by_reference' => false,
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'entry_type' => ProductImageType::class,
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'entry_type' => ProductImageType::class,
 
-                ]
-            )
+            ])
             ->end()
             ->with('metadata', ['class' => 'col-md-3'])
             ->add('category', ModelType::class, ['class' => Category::class, 'property' => 'name'])
+            ->add('productVariation', ProductVariationType::class)
+            ->end()
+            ->with('productVariations')
+            ->add('productVariations', CollectionType::class,
+                [
+                    'entry_type' => ProductVariationType::class,
+                    'by_reference' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true],
+                [
+                    'admin_code' => 'admin.productvariation'
+                ]
+            )
             ->end();
     }
 
@@ -86,7 +102,7 @@ final class ProductAdmin extends AbstractAdmin
     protected function configureShowFields(ShowMapper $show): void
     {
         $show->add('name')
-             ->add('productVariations')
+            ->add('productVariations')
             ->add('images');
     }
 
