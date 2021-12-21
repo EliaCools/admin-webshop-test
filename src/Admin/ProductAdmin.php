@@ -46,7 +46,11 @@ final class ProductAdmin extends AbstractAdmin
         $formMapper
             ->with('data', ['class' => 'col-md-9'])
             ->add('name', TextType::class)
-            ->add('price', MoneyType::class)
+            ->add('baseProduct', ProductVariationType::class,
+                [
+                    'label' => 'Base product',
+                    'baseProduct' => true
+                ])
             ->add('images', CollectionType::class, [
                 'by_reference' => false,
                 'allow_add' => true,
@@ -57,9 +61,8 @@ final class ProductAdmin extends AbstractAdmin
             ->end()
             ->with('metadata', ['class' => 'col-md-3'])
             ->add('category', ModelType::class, ['class' => Category::class, 'property' => 'name'])
-            ->add('productVariation', ProductVariationType::class)
-            ->end()
-            ->with('productVariations')
+            ->end();
+/*            ->with('productVariations')
             ->add('productVariations', CollectionType::class,
                 [
                     'entry_type' => ProductVariationType::class,
@@ -70,7 +73,7 @@ final class ProductAdmin extends AbstractAdmin
                     'admin_code' => 'admin.productvariation'
                 ]
             )
-            ->end();
+            ->end();*/
     }
 
 
@@ -81,15 +84,13 @@ final class ProductAdmin extends AbstractAdmin
                 , null,
                 ['field_type' => EntityType::class,
                     'field_options' => ['class' => Category::class, 'choice_label' => 'name']
-                ])
-            ->add('price',);
+                ]);
     }
 
     protected function configureListFields(ListMapper $listMapper): void
     {
         $listMapper->addIdentifier('name')
             ->addIdentifier('category.name')
-            ->addIdentifier('price')
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
                     'edit' => [],
@@ -125,6 +126,7 @@ final class ProductAdmin extends AbstractAdmin
         $admin = $this->isChild() ? $this->getParent() : $this;
         $id = $admin->getRequest()->get('id');
 
+        $menu->addChild('Manage base product', $admin->generateMenuUrl('admin.product.edit', ['id' => $id]));
         $menu->addChild('Manage product variations', $admin->generateMenuUrl('admin.productvariation.list', ['id' => $id]));
 
     }

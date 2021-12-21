@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\ProductVariationRepository;
+use App\Validator\VariantAttributesComboExist;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProductVariationRepository::class)
+ * @UniqueEntity("sku")
  */
 class ProductVariation
 {
@@ -32,6 +35,7 @@ class ProductVariation
 
     /**
      * @ORM\ManyToMany(targetEntity=AttributeValue::class)
+     * @VariantAttributesComboExist()
      */
     private $attributes;
 
@@ -39,6 +43,26 @@ class ProductVariation
      * @ORM\ManyToMany(targetEntity=ProductImage::class, mappedBy="productVariations")
      */
     private $productImages;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isBaseProduct = false;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $sku;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2)
+     */
+    private $price;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ProductVariation::class)
+     */
+    private $parent;
 
     public function __construct()
     {
@@ -127,5 +151,56 @@ class ProductVariation
         return $this;
     }
 
+    public function __tostring()
+    {
+        return $this->getSku();
+    }
 
+    public function getIsBaseProduct(): ?bool
+    {
+        return $this->isBaseProduct;
+    }
+
+    public function setIsBaseProduct(bool $isBaseProduct): self
+    {
+        $this->isBaseProduct = $isBaseProduct;
+
+        return $this;
+    }
+
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
+
+    public function setSku(string $sku): self
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(string $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
 }

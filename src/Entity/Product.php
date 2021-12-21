@@ -26,11 +26,6 @@ class Product
     private $name;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=3)
-     */
-    private $price;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -45,6 +40,7 @@ class Product
      * @ORM\OneToMany(targetEntity=ProductVariation::class, mappedBy="product", orphanRemoval=true, cascade={"persist"})
      */
     private $productVariations;
+
 
     public function __construct()
     {
@@ -69,17 +65,6 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?string
-    {
-        return $this->price;
-    }
-
-    public function setPrice(string $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
 
     public function getCategory(): ?Category
     {
@@ -128,7 +113,22 @@ class Product
      */
     public function getProductVariations(): Collection
     {
-        return $this->productVariations;
+        return $this->getProductVariationsWithoutBase();
+    }
+
+    /**
+     * @return Collection|ProductVariation[]
+     */
+    public function getProductVariationsWithoutBase(): Collection
+    {
+        $varsWithoutBase = new ArrayCollection();
+        foreach ($this->productVariations as $variation) {
+            if ($variation->getIsBaseProduct() === false) {
+                $varsWithoutBase[] = $variation;
+            }
+        }
+        return $varsWithoutBase;
+
     }
 
     public function addProductVariation(ProductVariation $productVariation): self
@@ -151,6 +151,35 @@ class Product
         }
 
         return $this;
+    }
+
+    public function setBaseProduct(ProductVariation $productVariation): self
+    {
+        $this->addProductVariation($productVariation);
+        $productVariation->setProduct($this);
+        $productVariation->setIsBaseProduct(true);
+
+        return $this;
+
+
+        /* $this->baseProduct = $productVariation;
+         return $this;*/
+    }
+
+    public function getBaseProduct(): ?ProductVariation
+    {
+        // Normally it always should be the first in the collection, but a foreach loop is added just in case
+        if (count($this->productVariations) !== 0) {
+            if ($this->productVariations[0]->getIsBaseProduct() === true) {
+                return $this->productVariations[0];
+            }
+            foreach ($this->productVariations as $variation) {
+                if ($variation->getIsBaseProduct() === true) {
+                    return $variation;
+                }
+            }
+        }
+        return null;
     }
 
     public function __tostring(): string
