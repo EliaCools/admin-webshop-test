@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\ProductVariation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,7 +16,9 @@ class ProductVariationType extends AbstractType
 
         $builder
             ->add('quantity')
-            ->add('price')
+            ->add('priceField', MoneyType::class, [
+              'label' => 'price'
+            ])
             ->add('sku')
         ;
         if($options["baseProduct"] === false){

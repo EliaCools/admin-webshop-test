@@ -28,7 +28,15 @@ class ProductVariationAdminController extends CRUDController
             );
         }
 
-        $newObject = $this->admin->getNewInstance();
+        /**
+         * @var ProductVariation $newObject
+         */
+        $newObject =  $this->admin->getNewInstance();
+
+        $parentVariation = $newObject->getProduct()->getBaseProduct();
+
+        $newObject->setParent($parentVariation);
+        $newObject->setPrice($parentVariation->getPrice());
 
         $this->admin->setSubject($newObject);
 
@@ -44,6 +52,7 @@ class ProductVariationAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode($request) || $this->isPreviewApproved($request))) {
                 /** @var ProductVariation */
                 $submittedObject = $form->getData();
+
                 if($newObject->getProduct() !== null){
                     $submittedObject->setProduct($newObject->getProduct());
                 }

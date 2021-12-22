@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class ProductImage
 {
-    const SERVER_PATH_TO_IMAGE_FOLDER = '../public/images';
 
+    public const RELATIVE_PRODUCT_PATH = 'products/';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -28,8 +28,7 @@ class ProductImage
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $directoryPath;
-
+    private $filename;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="images", cascade={"persist"})
@@ -48,6 +47,16 @@ class ProductImage
      * @ORM\ManyToMany(targetEntity=ProductVariation::class, inversedBy="productImages")
      */
     private $productVariations;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $relativePathFromServerImageFolder = self::RELATIVE_PRODUCT_PATH;
+
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $fileExtension;
 
     public function __construct()
     {
@@ -86,12 +95,14 @@ class ProductImage
 
         // move takes the target directory and target filename as params
         $this->getFile()->move(
-            self::SERVER_PATH_TO_IMAGE_FOLDER,
+            $_ENV['SERVER_IMAGE_FOLDER'] . self::RELATIVE_PRODUCT_PATH,
             $this->getFile()->getClientOriginalName()
         );
 
         // set the path property to the filename where you've saved the file
-        $this->directoryPath = $this->getFile()->getClientOriginalName();
+        $this->filename = $this->getFile()->getClientOriginalName();
+        $this->relativePathFromServerImageFolder = self::RELATIVE_PRODUCT_PATH;
+        $this->setFileExtension(pathinfo($this->getFile()->getClientOriginalName())['extension']);
 
         // clean up the file property as you won't need it anymore
         $this->setFile(null);
@@ -105,17 +116,16 @@ class ProductImage
     {
         $this->upload();
     }
+    
 
-
-
-    public function getDirectoryPath(): ?string
+    public function getFilename(): ?string
     {
-        return $this->directoryPath;
+        return $this->filename;
     }
 
-    public function setDirectoryPath(string $directoryPath): self
+    public function setFilename(string $filename): self
     {
-        $this->directoryPath = $directoryPath;
+        $this->filename = $filename;
 
         return $this;
     }
@@ -152,7 +162,7 @@ class ProductImage
 
     public function __tostring()
     {
-        return $this->getDirectoryPath();
+        return $this->getFilename();
     }
 
     /**
@@ -175,6 +185,30 @@ class ProductImage
     public function removeProductVariation(ProductVariation $productVariation): self
     {
         $this->productVariations->removeElement($productVariation);
+
+        return $this;
+    }
+
+    public function getRelativePathFromServerImageFolder(): ?string
+    {
+        return $this->relativePathFromServerImageFolder;
+    }
+
+    public function setRelativePathFromServerImageFolder(string $relativePathFromServerImageFolder): self
+    {
+        $this->relativePathFromServerImageFolder = $relativePathFromServerImageFolder;
+
+        return $this;
+    }
+
+    public function getFileExtension(): ?string
+    {
+        return $this->fileExtension;
+    }
+
+    public function setFileExtension(string $fileExtension): self
+    {
+        $this->fileExtension = $fileExtension;
 
         return $this;
     }

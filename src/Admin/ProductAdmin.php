@@ -126,8 +126,13 @@ final class ProductAdmin extends AbstractAdmin
         $admin = $this->isChild() ? $this->getParent() : $this;
         $id = $admin->getRequest()->get('id');
 
+
         $menu->addChild('Manage base product', $admin->generateMenuUrl('admin.product.edit', ['id' => $id]));
-        $menu->addChild('Manage product variations', $admin->generateMenuUrl('admin.productvariation.list', ['id' => $id]));
+
+        if(in_array($action, ['edit', 'list'])){
+            $menu->addChild('Manage product variations', $admin->generateMenuUrl('admin.productvariation.list', ['id' => $id]));
+
+        }
 
     }
 

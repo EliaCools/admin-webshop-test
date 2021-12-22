@@ -11,7 +11,7 @@
                 <div class="col-xs-11">
                     {% endif %}
                     {{ form_row(child, { label: false }) }}
-                    <p> {{ child.vars.value.directorypath ?? "choose a file" }}</p>
+                    <p> {{ child.vars.value.filename ?? "choose a file" }}</p>
                     {% if allow_delete %}
                 </div>
             </div>

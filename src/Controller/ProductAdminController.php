@@ -50,6 +50,7 @@ class ProductAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode($request) || $this->isPreviewApproved($request))) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
+
                 $this->admin->setSubject($submittedObject);
                 $this->admin->checkAccess('create', $submittedObject);
                 try {

@@ -16,6 +16,7 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 class ProductVariationAdmin extends AbstractAdmin
 {
@@ -26,19 +27,11 @@ class ProductVariationAdmin extends AbstractAdmin
 
         $form
             ->add('quantity')
-            ->add('price')
-            ->add('attributes', EntityType::class, [
-                "class" => AttributeGroup::class,
-                'mapped' => false,
-                "multiple" => true,
-                "query_builder" => function(EntityRepository $er){
-                    return  $er->createQueryBuilder('a');
-                },
-
-
-            ])
+            ->add('priceField', MoneyType::class)
+            ->add('attributes')
             ->add('sku');
     }
+
 
     protected function configureListFields(ListMapper $list): void
     {

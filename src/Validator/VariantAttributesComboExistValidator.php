@@ -4,6 +4,7 @@ namespace App\Validator;
 
 use App\Entity\ProductVariation;
 use App\Repository\ProductVariationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use http\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Constraint;
@@ -47,7 +48,7 @@ class VariantAttributesComboExistValidator extends ConstraintValidator
 
     }
 
-    private function getNewAttributeCombination(PersistentCollection $attributes): array{
+    private function getNewAttributeCombination($attributes): array{
         $newAttributeCombination = [];
 
         foreach ($attributes as $attribute){

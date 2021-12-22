@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductVariationRepository;
 use App\Validator\VariantAttributesComboExist;
+use Brick\Money\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class ProductVariation
 {
+    private const CURRENCY = 'EUR';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -180,16 +183,34 @@ class ProductVariation
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?Money
     {
-        return $this->price;
+        if($this->price === null){
+            return null;
+        }
+        return Money::of($this->price, self::CURRENCY);
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(Money $price): self
     {
-        $this->price = $price;
+        $this->price = (string) $price->getAmount();
 
         return $this;
+    }
+
+    public function setPriceField(string $price): self
+    {
+        $money = Money::of($price, self::CURRENCY);
+        $this->setPrice($money);
+        return $this;
+    }
+
+    public function getPriceField() :?string
+    {
+        if($this->getPrice() === null){
+            return $this->getPrice();
+        }
+        return (string) $this->getPrice()->getAmount();
     }
 
     public function getParent(): ?self
