@@ -81,3 +81,10 @@ services:
         arguments: [~, App\Entity\User, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: '%group_admin%',  label: user }
+
+    admin.customer:
+        class: App\Admin\CustomerAdmin
+        arguments: [~, App\Entity\Customer, App\Controller\CustomerAdminController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: '%group_admin%', label: Customer }
+        public: true

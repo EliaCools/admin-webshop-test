@@ -16,11 +16,11 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class AppLoginAuthenticator extends AbstractLoginFormAuthenticator
+class CustomerLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'customer_login';
 
     private UrlGeneratorInterface $urlGenerator;
 
@@ -50,8 +50,8 @@ class AppLoginAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-
-        return new RedirectResponse($this->urlGenerator->generate('sonata_admin_dashboard'));
+        // For example:
+        return new RedirectResponse($this->urlGenerator->generate('default'));
 
     }
 
