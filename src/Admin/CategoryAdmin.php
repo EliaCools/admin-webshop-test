@@ -18,6 +18,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 final class CategoryAdmin extends AbstractAdmin
 {
+    protected $baseRoutePattern = 'category';
     protected function configureTabMenu(ItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
     {
         if (!$childAdmin && !in_array($action, ['edit', 'show'])) {
@@ -41,6 +42,7 @@ final class CategoryAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper): void
     {
         $formMapper->add('name', TextType::class);
+        $formMapper->add('parent');
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
@@ -50,7 +52,9 @@ final class CategoryAdmin extends AbstractAdmin
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
+
         $collection->add('goToProductList');
+        $collection->add('insertNewCategoryApi', 'create/api');
     }
 
     protected function configureListFields(ListMapper $listMapper): void

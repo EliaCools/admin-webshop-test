@@ -57,6 +57,7 @@ services:
             - { name: sonata.admin, manager_type: orm, group: '%group_webShop%', label: Category }
         calls:
             - [ addChild, ['@admin.product', 'category' ] ]
+            - [ setTemplate, [ 'list', 'admin/CategoryAdmin/list.html.twig' ] ]
 
     admin.productimage:
         class: App\Admin\ProductImageAdmin

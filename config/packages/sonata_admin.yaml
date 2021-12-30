@@ -7,7 +7,7 @@ sonata_admin:
             - { type: sonata.block.service.stats, position: right }
 
     assets:
-        extra_javascripts: ['app.js']
+        extra_javascripts: [ ]
     options:
         use_stickyforms: false
     security:

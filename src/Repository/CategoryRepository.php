@@ -18,6 +18,29 @@ class CategoryRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Category::class);
     }
+    public function findLastInserted()
+    {
+        return $this
+            ->createQueryBuilder("e")
+            ->orderBy("e.id", "DESC")
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+    /**
+     * @return Category[] Returns an array of Category objects
+     */
+    public function findTopLevelCategories(): array |null
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.parent is null')
+            ->orderBy('c.id', 'ASC')
+            ->setMaxResults(null)
+            ->getQuery()
+            ->getResult();
+    }
 
     // /**
     //  * @return Category[] Returns an array of Category objects
