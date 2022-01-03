@@ -1,65 +1,160 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll('.category-tree-names').forEach(element => {
-        element.addEventListener('click', event => {
-            console.log(element.dataset.categoryId);
-            event.stopPropagation();
-        })
-    })
+    let tree = window.CATEGORY_TREE;
 
-    document.querySelectorAll('.add-after').forEach(element => {
-        element.addEventListener('click', event => {
-
-            let selectedCategoryElement = element.closest(".category-tree-items").id;
-            let selectedCategoryId = element.closest(".category-tree-items").dataset.categoryId;
-            let li = createInputElement(element, selectedCategoryId);
-
-            document.querySelector('#' + selectedCategoryElement).insertAdjacentElement('afterend', li);
-            event.stopPropagation();
-        })
-    })
-
-    function createInputElement(element, referencedCategoryId){
-
-        let input = document.createElement("input")
-        input.setAttribute("type", "text");
-        input.setAttribute("id", 'new-category-input');
-
-        let li = document.createElement('li');
-        li.appendChild(input);
-
-        let confirmButton = document.createElement('button')
-        confirmButton.dataset.referencedCategoryId = referencedCategoryId;
-        confirmButton.dataset.action = "addAfter"
-
-        let text = document.createTextNode("confirm");
-        confirmButton.appendChild(text);
-
-        confirmButton.addEventListener('click', makeApiRequest , false)
-
-        input.insertAdjacentElement('afterend', confirmButton);
-        return li;
+    let state = {
+        editing: false
     }
 
+    let existingData = {
+        copyLevelMarkup: function (category){
+            let clone = document.querySelector('#levelMarkup').content.cloneNode(true);
+            clone.querySelector(".level-title").textContent = category.name;
+            clone.querySelector("[data-level]").setAttribute('draggable', true);
+            addListeners(clone, category.id);
+            return clone
+        },
+        renderSubLevel: function (categories, parentLevel) {
+            categories.forEach(category => {
+                let clone = this.copyLevelMarkup(category)
 
-    function makeApiRequest(event) {
+                if (category.children !== []) {
+                    this.renderSubLevel(category.children, clone);
+                }
+                parentLevel.querySelector('ul').appendChild(clone);
+            })
+        },
+        render: function(categories) {
+            categories.forEach(category => {
+                let clone = this.copyLevelMarkup(category);
 
-     event.preventDefault();
-     event.stopPropagation();
-     request(event.target.dataset.referencedCategoryId, event.target.dataset.action);
+                if (category.children.length > 0) {
+                    this.renderSubLevel(category.children, clone);
+                }
+                document.querySelector("#base-ul").appendChild(clone);
+            })
+        }
+    }
+    existingData.render(tree);
 
+    let apiController = {
+        addCategoryApiRequest : async function (referenceId, action) {
+            let name = document.getElementById('new-category-input').value;
+            let category = {'name': name, 'referencedId': referenceId, 'action': action};
+
+            let promise = fetch('http://deployertest.local/admin/category/create/api', {
+                method: 'POST',
+                body: JSON.stringify(category),
+            })
+            return promise;
+        },
+        removeCategoryAndChildrenApiRequest: async function (categoryId) {
+            let promise = fetch('http://deployertest.local/admin/category/' + categoryId + '/delete/api', {
+
+            })
+            return promise;
+        }
     }
 
-    async function request(referencedId, action) {
-        let name = document.getElementById('new-category-input').value;
-        let category = { 'name' : name , "referencedId" : referencedId, 'action': action };
+    let treeviewActions = {
+        resetBtnToggle: function () {
+            $(".js-treeview")
+                .find(".level-add")
+                .find("span")
+                .removeClass()
+                .addClass("fa fa-plus");
+            $(".js-treeview")
+                .find(".level-add")
+                .siblings()
+                .removeClass("in");
+        },
+        addSameLevel: function (target, referenceId) {
+            let ulElm = target.closest("ul");
+            let clone = document.querySelector('#inputMarkup').content.cloneNode(true);
 
-        let promise = fetch('http://deployertest.local/admin/category/create/api', {
-            method: 'POST',
-            body: JSON.stringify(category),
+            clone.querySelector('#category-add-confirm').addEventListener('click', event => {
+                apiController.addCategoryApiRequest(referenceId, 'addAfter').then(response => response.json()).then(data => {
+                    ulElm.removeChild(event.target.closest('li'));
+                    let levelMarkupClone = document.querySelector('#levelMarkup').content.cloneNode(true);
+                    levelMarkupClone.querySelector('.level-title').textContent = data.name;
+                    addListeners(levelMarkupClone, data.id);
+                    ulElm.append(levelMarkupClone);
+                    state.editing = false;
+                });
+            })
+            clone.querySelector('#category-deny').addEventListener('click', event => {
+                ulElm.removeChild(event.target.closest('li'));
+                state.editing = false;
+            })
+            ulElm.append(clone)
+        },
+        addSubLevel: function (target, referenceId) {
+            let liElm = target.closest("li");
+
+            let clone = document.querySelector('#inputMarkup').content.cloneNode(true);
+
+            clone.querySelector('#category-add-confirm').addEventListener('click', event => {
+               apiController.addCategoryApiRequest(referenceId, 'addSub').then(response => response.json()).then(data => {
+                    liElm.querySelector('ul').removeChild(event.target.closest('li'));
+                    let levelMarkupClone = document.querySelector('#levelMarkup').content.cloneNode(true);
+                    levelMarkupClone.querySelector('.level-title').textContent = data.name;
+                    addListeners(levelMarkupClone, data.id);
+                    liElm.querySelector('ul').append(levelMarkupClone);
+                    state.editing = false;
+                })
+            })
+            clone.querySelector('#category-deny').addEventListener('click', event => {
+                liElm.querySelector('ul').removeChild(event.target.closest('li'));
+                state.editing = false;
+            })
+
+            liElm.querySelector('ul').append(clone);
+        },
+        removeLevel: function (target, categoryId) {
+           apiController.removeCategoryAndChildrenApiRequest(categoryId).then(response => response.json()).then(data => {
+                console.log(data);
+                target.closest("li").remove();
+            });
+
+
+        }
+    };
+
+    $(".js-treeview").on("click", ".level-add", function () {
+        if (state.editing === false) {
+            $(this).find("span").toggleClass("fa-plus").toggleClass("fa-times text-danger");
+            $(this).siblings().toggleClass("in");
+
+        }
+    });
+
+
+    function addListeners(clone, categoryId) {
+        clone.querySelector(".level-same").addEventListener('click', event => {
+            state.editing = true;
+            treeviewActions.addSameLevel(event.target, categoryId);
+            treeviewActions.resetBtnToggle();
         })
-
-        promise.then(response => response.json()).then(
-            data => console.log(data));
+        clone.querySelector('.level-sub').addEventListener('click', event => {
+            state.editing = true;
+            treeviewActions.addSubLevel(event.target, categoryId);
+            treeviewActions.resetBtnToggle();
+        })
+        clone.querySelector('.level-remove').addEventListener('click', event => {
+            treeviewActions.removeLevel(event.target, categoryId);
+        })
+        clone.querySelector(".level-title").addEventListener('click', event => {
+            let isSelected = event.target.closest(".category-treeview__level").classList.contains("selected");
+            if(!isSelected){
+                event.target.closest(".js-treeview").querySelector(".category-treeview__level").classList.remove("selected");
+                event.target.closest(".category-treeview__level").classList.add("selected");
+            }
+            if(isSelected){
+                event.target.closest(".category-treeview__level").classList.remove("selected");
+            }
+        })
     }
+
+    // confirmbutton, needs to the the categoryId of the category it is made in reference to
+
 
 });

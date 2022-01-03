@@ -51,6 +51,7 @@ file that was distributed with this source code.
         {% for stylesheet in sonata_config.getOption('stylesheets', []) %}
             <link rel="stylesheet" href="{{ asset(stylesheet) }}">
         {% endfor %}
+        {{ encore_entry_link_tags('admin') }}
     {% endblock %}
 
     {% block javascripts %}

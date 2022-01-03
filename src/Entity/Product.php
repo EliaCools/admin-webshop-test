@@ -28,7 +28,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $category;
 

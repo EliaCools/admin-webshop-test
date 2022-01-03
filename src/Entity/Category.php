@@ -6,6 +6,8 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -16,11 +18,13 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"add-category-response"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"javascript-tree", "add-category-response"})
      */
     private $name;
 
@@ -31,11 +35,13 @@ class Category
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="children")
+     * @Groups({"javascript-tree"})
      */
     private $parent;
 
     /**
-     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="parent")
+     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="parent", cascade= {"persist"}, orphanRemoval=true)
+     * @Groups({"javascript-tree"})
      */
     private $children;
 

@@ -55,6 +55,7 @@ final class CategoryAdmin extends AbstractAdmin
 
         $collection->add('goToProductList');
         $collection->add('insertNewCategoryApi', 'create/api');
+        $collection->add('deleteCategoryAndAllChildrenApi',  $this->getRouterIdParameter() . '/delete/api/');
     }
 
     protected function configureListFields(ListMapper $listMapper): void

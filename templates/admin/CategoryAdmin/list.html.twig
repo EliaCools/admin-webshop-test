@@ -14,6 +14,7 @@ file that was distributed with this source code.
         {{ encore_entry_script_tags('categoryEdit') }}
     {% endblock %}
 
+
 {% block list_table %}
 
 
@@ -31,39 +32,61 @@ file that was distributed with this source code.
                     {{ sonata_block_render_event('sonata.admin.list.table.top', { 'admin': admin }) }}
                     {% block list_header %}{% endblock %}
 
-                    {% macro categorytree(tree, level = 0) %}
-                        <ul>
-                            {% for category in tree %}
 
-                                    <li class="category-tree-items" id="category-{{ category.id }}-item" data-category-id="{{ category.id }}" data-category-parent-id="{{ category.parentId ?? null }}" >
-                                        <span data-category-id="{{ category.id }}" class="category-tree-names">
-                                        {{ category.name }}
-                                        </span>
-                                        <div class="dropdown">
-                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                Dropdown
-                                                 <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                <li><a href="#">edit</a></li>
-                                                <li role="separator" class="divider"></li>
-                                                <li class="add-after">add after</li>
-                                                <li class="add-before">add before</li>
-                                                <li class="add-subcategory">new subcategory</li>
-                                            </ul>
-                                        </div>
-
-                                        {% if category.children != [] %}
-                                            {{ _self.categorytree(category.children, level + 1) }}
-                                        {% endif %}
-                                    </li>
-
-
-                            {% endfor %}
+                    <div class="category-treeview js-treeview">
+                        <ul id="base-ul">
+{#                            <li>
+                                <div class="category-treeview__level" data-level="A">
+                                    <span class="level-title">Level A</span>
+                                    <div class="category-treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="fa fa-plus"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="fa fa-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>Add Same Level</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>Add Sub Level</span></div>
+                                    </div>
+                                </div>
+                            </li>#}
                         </ul>
-                    {% endmacro %}
-                    {{ _self.categorytree(tree) }}
+                    </div>
+                </div>
+
+                <template id="levelMarkup">
+                    <li>
+                        <div class="category-treeview__level" data-level="A">
+                            <span class="level-title">Level A</span>
+                            <div class="category-treeview__level-btns">
+                                <div class="btn btn-default btn-sm level-add"><span class="fa fa-plus"></span></div>
+                                <div class="btn btn-default btn-sm level-remove"><span class="fa fa-trash text-danger"></span></div>
+                                <div class="btn btn-default btn-sm level-same"><span>Add Same Level</span></div>
+                                <div class="btn btn-default btn-sm level-sub"><span>Add Sub Level</span></div>
+                            </div>
+                        </div>
+                        <ul class="level">
+
+                        </ul>
+                    </li>
+                </template>
+
+
+                <template id="inputMarkup">
+                    <li>
+                        <div class="category-treeview__level" data-level="A">
+                            <input type="text" id="new-category-input">
+                            <div class="category-add-buttons">
+                                <div class="btn btn-default btn-sm " id="category-add-confirm"><span class="fa fa-plus"></span></div>
+                                <div class="btn btn-default btn-sm" id="category-deny" ><span class="fa fa-trash text-danger"></span></div>
+                            </div>
+                        </div>
+                        <ul class="level">
+
+                        </ul>
+                    </li>
+                </template>
+
+
+                    <script>
+                        window.CATEGORY_TREE = {{ tree|raw }}
+                    </script>
 
                     {{ sonata_block_render_event('sonata.admin.list.table.bottom', { 'admin': admin }) }}
                 </div>

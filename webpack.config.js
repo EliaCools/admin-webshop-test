@@ -13,7 +13,7 @@ Encore
     .setPublicPath('/build')
     // only needed for CDN's or sub-directory deploy
     //.setManifestKeyPrefix('build/')
-
+    .enableReactPreset()
     /*
      * ENTRY CONFIG
      *
@@ -23,6 +23,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('product', './assets/javascript/product/product.js')
     .addEntry('categoryEdit', './assets/javascript/category/edit.js')
+    .addEntry('admin', './assets/admin.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
